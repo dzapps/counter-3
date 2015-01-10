@@ -4,6 +4,8 @@ var handlebars = require("express-handlebars");
 var limitString = require("./limitString");
 var cookieParser = require("cookie-parser");
 var redis = require("redis");
+var request = require("request");
+var _ = require("underscore");
 require("amdefine/intercept");
 var id = require("js/id");
 
@@ -16,6 +18,39 @@ app.engine("handlebars", handlebars());
 app.set("view engine", "handlebars");
 app.use(cookieParser());
 app.use(express.static("./"));
+
+function recordInitialHit(id, details) {
+	redisClient.hmset("hits:" + id, details);
+}
+
+function recordIpInfo(id) {
+	var hitKey = "hits:" + id;
+	
+	redisClient.hget(hitKey, "ip", function(error, ip) {
+		if(ip) {
+			request("http://ipinfo.io/" + ip + "/json", function(error, response, body) {
+				var ipInfo = JSON.parse(body);
+				
+				if(_.isObject(ipInfo)) {
+					redisClient.hmset(hitKey, {
+						isp: ipInfo.org || "",
+						country: ipInfo.country || "",
+						region: ipInfo.region || "",
+						city: ipInfo.city || ""
+					});
+				}
+			});
+		}
+		
+		else {
+			console.log("Error getting IP for " + hitKey + ": " + error);
+		}
+	});
+}
+
+function recordUserAgent(id, details) {
+	redisClient.hmset("hits:" + id, details);
+}
 
 app.get("/hit/:projectId", function(request, response) {
 	var url = request.headers.referer;
@@ -30,7 +65,7 @@ app.get("/hit/:projectId", function(request, response) {
 			response.cookie("id", visitorId);
 		}
 		
-		redisClient.hmset("hits:" + hitId, {
+		recordInitialHit(hitId, {
 			project: projectId,
 			visitor: visitorId,
 			time: new Date().valueOf(),
@@ -39,6 +74,8 @@ app.get("/hit/:projectId", function(request, response) {
 			userAgent: request.headers["user-agent"] || ""
 		});
 		
+		recordIpInfo(hitId);
+		
 		response.render("confirm-hit", {
 			id: hitId
 		});
@@ -46,6 +83,11 @@ app.get("/hit/:projectId", function(request, response) {
 });
 
 app.get("/confirm-hit/:id", function(request, response) {
+	recordUserAgent(request.params.id, {
+		referrer: request.query.referrer,
+		resolution: request.query.resolution
+	});
+	
 	response.end("");
 });
 
