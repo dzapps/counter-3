@@ -82,7 +82,7 @@ app.get("/hit/:projectId", function(request, response) {
 	}
 });
 
-app.get("/confirm-hit/:id", function(request, response) {
+app.get("/hit-callback/:id", function(request, response) {
 	recordUserAgent(request.params.id, {
 		referrer: request.query.referrer,
 		resolution: request.query.resolution
