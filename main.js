@@ -10,6 +10,7 @@ var id = require("js/id");
 const URL_MAX_LENGTH = 255;
 
 var app = express();
+var redisClient = redis.createClient();
 
 app.engine("handlebars", handlebars());
 app.set("view engine", "handlebars");
@@ -18,6 +19,7 @@ app.use(express.static("./"));
 
 app.get("/hit/:projectId", function(request, response) {
 	var url = request.headers.referer;
+	var projectId = request.params.projectId;
 	
 	if(url) {
 		var visitorId = request.cookies.id;
@@ -28,16 +30,23 @@ app.get("/hit/:projectId", function(request, response) {
 			response.cookie("id", visitorId);
 		}
 		
-		
+		redisClient.hmset("hits:" + hitId, {
+			project: projectId,
+			visitor: visitorId,
+			time: new Date().valueOf(),
+			ip: request.connection.remoteAddress,
+			url: url,
+			userAgent: request.headers["user-agent"]
+		});
 		
 		response.render("confirm-hit", {
-			hitId: hitId
+			id: hitId
 		});
 	}
+	
 });
 
-app.get("/confirm-hit/:hitId", function(request, response) {
-	
+app.get("/confirm-hit/:id", function(request, response) {
 	response.end("");
 });
 
