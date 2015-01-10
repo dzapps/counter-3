@@ -1,15 +1,12 @@
 var requirejs = require("requirejs");
 var express = require("express");
 var handlebars = require("express-handlebars");
-var limitString = require("./limitString");
 var cookieParser = require("cookie-parser");
 var redis = require("redis");
 var request = require("request");
 var _ = require("underscore");
 require("amdefine/intercept");
 var id = require("js/id");
-
-const URL_MAX_LENGTH = 255;
 
 var app = express();
 var redisClient = redis.createClient();
