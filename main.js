@@ -81,7 +81,7 @@ app.get("/hit/:projectId", function(request, response) {
 		
 		recordIpInfo(hitId);
 		
-		response.render("confirm-hit", {
+		response.render("hit-js", {
 			id: hitId
 		});
 	}
