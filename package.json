@@ -1,0 +1,18 @@
+{
+	"name": "counter",
+	"version": "0.0.0",
+	"description": "Hit counter",
+	"author": "Gus Hogg-Blake <gus@hogg-blake.co.uk>",
+	"dependencies": {
+		"express": "4.x",
+		"express-handlebars": "*",
+		"cookie-parser": "*",
+		"requirejs": "*",
+		"amdefine": "*",
+		"redis": "*"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/gushogg-blake/counter.git"
+	}
+}

@@ -1,0 +1,13 @@
+var path = "/confirm-hit/{{id}}";
+
+var params = {
+	referrer: document.referrer
+};
+
+var queryString = "";
+
+for(var p in params) {
+	queryString += p + "=" + params[p];
+}
+
+new Image().src = path + "?" + queryString;
