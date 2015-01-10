@@ -9,7 +9,8 @@
 		"cookie-parser": "*",
 		"requirejs": "*",
 		"amdefine": "*",
-		"redis": "*"
+		"redis": "*",
+		"js": "https://github.com/gushogg-blake/js/archive/master.tar.gz"
 	},
 	"repository": {
 		"type": "git",
