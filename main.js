@@ -36,14 +36,13 @@ app.get("/hit/:projectId", function(request, response) {
 			time: new Date().valueOf(),
 			ip: request.connection.remoteAddress,
 			url: url,
-			userAgent: request.headers["user-agent"]
+			userAgent: request.headers["user-agent"] || ""
 		});
 		
 		response.render("confirm-hit", {
 			id: hitId
 		});
 	}
-	
 });
 
 app.get("/confirm-hit/:id", function(request, response) {
