@@ -4,19 +4,13 @@ var handlebars = require("express-handlebars");
 var mysql = require("mysql");
 var limitString = require("./limitString");
 var cookieParser = require("cookie-parser");
-
-/*
-NOTE amdefine is best right between all the requires that don't need it
-and those that do, as it can mess things up.
-*/
-
+var redis = require("redis");
 require("amdefine/intercept");
-
 var id = require("js/id");
 
-var app = express();
-
 const URL_MAX_LENGTH = 255;
+
+var app = express();
 
 app.engine("handlebars", handlebars());
 app.set("view engine", "handlebars");
@@ -24,19 +18,17 @@ app.use(cookieParser());
 app.use(express.static("./"));
 
 app.get("/hit/:id", function(request, response) {
-	var theId;
+	var visitorId = request.cookies.id;
 	
-	if(!request.cookies.id) {
-		theId = id();
-		console.log("setting cookie " + theId);
-		response.cookie("id", theId);
-		request.cookies.id = theId;
+	if(!visitorId) {
+		visitorId = id();
+		response.cookie("id", visitorId);
 	}
 	
-	console.log(request.cookies.id);
+	var hitId = id();
 	
 	response.render("confirm-hit", {
-		id: request.params.id
+		hitId: hitId
 	});
 });
 
