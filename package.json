@@ -6,6 +6,7 @@
 	"dependencies": {
 		"express": "4.x",
 		"express-handlebars": "*",
+		"express-session": "*",
 		"cookie-parser": "*",
 		"requirejs": "*",
 		"amdefine": "*",

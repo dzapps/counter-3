@@ -1,6 +1,7 @@
 var requirejs = require("requirejs");
 var express = require("express");
 var handlebars = require("express-handlebars");
+var session = require("express-session");
 var cookieParser = require("cookie-parser");
 var redis = require("redis");
 var request = require("request");
@@ -15,6 +16,13 @@ app.engine("handlebars", handlebars());
 app.set("view engine", "handlebars");
 app.use(cookieParser());
 app.use(express.static("./"));
+
+app.use(session({
+	resave: false,
+	store: new session.MemoryStore(),
+	saveUninitialized: false,
+	secret: "ad6d3aa4ad0f"
+}));
 
 function recordInitialHit(id, details) {
 	redisClient.hmset("hits:" + id, details);
