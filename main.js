@@ -1,7 +1,6 @@
 var requirejs = require("requirejs");
 var express = require("express");
 var handlebars = require("express-handlebars");
-var mysql = require("mysql");
 var limitString = require("./limitString");
 var cookieParser = require("cookie-parser");
 var redis = require("redis");
@@ -17,22 +16,27 @@ app.set("view engine", "handlebars");
 app.use(cookieParser());
 app.use(express.static("./"));
 
-app.get("/hit/:id", function(request, response) {
-	var visitorId = request.cookies.id;
+app.get("/hit/:projectId", function(request, response) {
+	var url = request.headers.referer;
 	
-	if(!visitorId) {
-		visitorId = id();
-		response.cookie("id", visitorId);
+	if(url) {
+		var visitorId = request.cookies.id;
+		var hitId = id();
+		
+		if(!visitorId) {
+			visitorId = id();
+			response.cookie("id", visitorId);
+		}
+		
+		
+		
+		response.render("confirm-hit", {
+			hitId: hitId
+		});
 	}
-	
-	var hitId = id();
-	
-	response.render("confirm-hit", {
-		hitId: hitId
-	});
 });
 
-app.get("/confirm-hit/:id", function(request, response) {
+app.get("/confirm-hit/:hitId", function(request, response) {
 	
 	response.end("");
 });
