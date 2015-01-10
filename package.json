@@ -11,7 +11,8 @@
 		"amdefine": "*",
 		"redis": "*",
 		"hiredis": "*",
-		"js": "https://github.com/gushogg-blake/js/archive/master.tar.gz"
+		"js": "https://github.com/gushogg-blake/js/archive/master.tar.gz",
+		"async": "*"
 	},
 	"repository": {
 		"type": "git",
