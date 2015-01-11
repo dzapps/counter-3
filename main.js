@@ -84,9 +84,26 @@ function renderIndex(response, data) {
 	response.render("index", data || {});
 }
 
-function renderHome(response, data) {
+function renderHome(request, response, data) {
+	data = data || {};
 	response.locals.css = ["home"];
-	response.render("home", data || {});
+	
+	redisClient.lrange("userProjects:" + request.session.username, 0, -1, function(error, ids) {
+		async.map(ids, function(id, callback) {
+			redisClient.hgetall("projects:" + id, function(error, project) {
+				callback(error, project);
+			});
+		}, function(error, results) {
+			if(error) {
+				render500(response, "Error retrieving projects from database", error);
+			}
+			
+			else {
+				data.projects = results;
+				response.render("home", data);
+			}
+		});
+	});
 }
 
 function render500(response, errorSummary, errorDetails) {
@@ -96,6 +113,16 @@ function render500(response, errorSummary, errorDetails) {
 		summary: errorSummary,
 		details: errorDetails
 	});
+}
+
+function createProject(username, name, id) {
+	redisClient.hmset("projects:" + id, {
+		name: name,
+		user: username,
+		id: id
+	});
+	
+	redisClient.lpush("userProjects:" + username, id);
 }
 
 function login(request, response, username) {
@@ -169,6 +196,7 @@ app.post("/start", function(request, response) {
 	
 	else {
 		var projectName = request.body.project;
+		var projectId = id();
 		var username = request.body.username;
 		var password = request.body.password;
 		var userKey = "users:" + username;
@@ -217,15 +245,11 @@ app.post("/start", function(request, response) {
 					password: results.getPasswordHash
 				});
 				
-				redisClient.hmset("projects:" + projectName, {
-					name: projectName,
-					user: username
-				});
+				createProject(username, projectName, projectId);
+				login(request, response, username);
 		
-				renderHome(response, {
-					justRegistered: true,
-					loggedIn: true,
-					username: username,
+				renderHome(request, response, {
+					justRegistered: true
 				});
 			}
 		});
@@ -281,7 +305,7 @@ app.post("/home", function(request, response) {
 			
 			else {
 				login(request, response, username);
-				renderHome(response);
+				renderHome(request, response);
 			}
 		}
 	});
