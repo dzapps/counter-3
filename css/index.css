@@ -55,6 +55,7 @@ input {
 }
 
 #login {
+	color: white;
 	margin-top: .7em;
 	border-radius: .6em;
 	padding: .8em;
@@ -66,8 +67,4 @@ input {
 	font-weight: bold;
 	color: white;
 	margin-top: 0;
-}
-
-#login p {
-	color: white;
 }
