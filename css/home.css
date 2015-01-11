@@ -1,0 +1,17 @@
+#main {
+	margin: 1em auto;
+	width: 60em;
+}
+
+h1 {
+	font-family: Arvo, sans-serif;
+	font-size: 3.5em;
+	text-shadow: 2px 2px 1px rgba(0, 0, 0, .3);
+	color: white;
+}
+
+#page {
+	border-radius: 1em;
+	padding: .8em;
+	background: white;
+}
