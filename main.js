@@ -1,6 +1,5 @@
 var requirejs = require("requirejs");
 var express = require("express");
-var handlebars = require("express-handlebars");
 var session = require("express-session");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
