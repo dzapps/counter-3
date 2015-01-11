@@ -41,6 +41,8 @@ app.use(function(request, response, next) {
 		loggedIn: request.session.loggedIn,
 		username: request.session.username
 	};
+	
+	next();
 });
 
 app.use(bodyParser.urlencoded({
