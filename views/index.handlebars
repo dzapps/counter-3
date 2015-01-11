@@ -6,13 +6,17 @@
 		</div>
 		<div id="start">
 			<div id="create-project">
-				{{#errors}}
-					{{param}} {{msg}} {{value}}
-				{{/errors}}
+				{{#if errors}}
+				<ul>
+					{{#errors}}
+					<li>{{msg}}</li>
+					{{/errors}}
+				</ul>
+				{{/if}}
 				<form action="/start" method="post">
-					<input class="form-control" name="project" placeholder="Project name">
-					<input class="form-control" name="username" placeholder="Username">
-					<input class="form-control" name="password" type="password" placeholder="Password">
+					<input class="form-control" name="project" placeholder="Project name" value="{{start.project}}">
+					<input class="form-control" name="username" placeholder="Username" value="{{start.username}}">
+					<input class="form-control" name="password" type="password" placeholder="Password" value="{{start.password}}">
 					<input class="btn btn-success" type="submit" value="Create project">
 				</form>
 			</div>

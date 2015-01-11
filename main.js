@@ -177,6 +177,7 @@ app.post("/start", function(request, response) {
 				if(error === "user exists") {
 					renderIndex(response, {
 						formSubmitted: "start",
+						start: request.body,
 						errors: [{
 							param: "username",
 							msg: "The username " + username + " is already registered",
