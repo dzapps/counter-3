@@ -5,7 +5,6 @@
 	justify-content: center;
 	width: 100%;
 	height: 100%;
-	flex-grow: 1;
 }
 
 #landing-page {
@@ -32,6 +31,7 @@
 #start {
 	display: flex;
 	flex-direction: column;
+	width: 37%;
 }
 
 #create-project {
@@ -46,7 +46,28 @@
 	flex-direction: column;
 }
 
+input {
+	margin-top: .3rem;
+}
+
 #create-project input {
 	font-size: 1.5em;
-	margin-top: .2em;
+}
+
+#login {
+	margin-top: .7em;
+	border-radius: .6em;
+	padding: .8em;
+	background: rgba(171, 171, 171, 0.44);
+}
+
+#login h1 {
+	font-size: .9em;
+	font-weight: bold;
+	color: white;
+	margin-top: 0;
+}
+
+#login p {
+	color: white;
 }

@@ -6,22 +6,36 @@
 		</div>
 		<div id="start">
 			<div id="create-project">
-				{{#if errors}}
+				{{#if start.errors}}
+				Error:
 				<ul>
-					{{#errors}}
+					{{#start.errors}}
 					<li>{{msg}}</li>
-					{{/errors}}
+					{{/start.errors}}
 				</ul>
 				{{/if}}
-				<form action="/start" method="post">
-					<input class="form-control" name="project" placeholder="Project name" value="{{start.project}}">
-					<input class="form-control" name="username" placeholder="Username" value="{{start.username}}">
-					<input class="form-control" name="password" type="password" placeholder="Password" value="{{start.password}}">
+				<form action="/start" method="post" autocomplete="off">
+					<input class="form-control" name="project" placeholder="Project name" value="{{start.values.project}}">
+					<input class="form-control" name="username" placeholder="Username" value="{{start.values.username}}">
+					<input class="form-control" name="password" type="password" placeholder="Password" value="{{start.values.password}}">
 					<input class="btn btn-success" type="submit" value="Create project">
 				</form>
 			</div>
 			<div id="login">
-				
+				<h1>Already have an account?</h1>
+				{{#if login.errors}}
+				Error:
+				<ul>
+					{{#login.errors}}
+					<li>{{msg}}</li>
+					{{/login.errors}}
+				</ul>
+				{{/if}}
+				<form action="/home" method="post">
+					<input class="form-control" name="username" placeholder="Username" value="{{login.values.username}}">
+					<input class="form-control" name="password" type="password" placeholder="Password" value="{{login.values.password}}">
+					<input class="btn btn-primary" type="submit" value="Log in">
+				</form>
 			</div>
 		</div>
 	</div>

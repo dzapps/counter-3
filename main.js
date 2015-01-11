@@ -36,6 +36,13 @@ app.use(session({
 	secret: "ad6d3aa4ad0f"
 }));
 
+app.use(function(request, response, next) {
+	response.locals.user = {
+		loggedIn: request.session.loggedIn,
+		username: request.session.username
+	};
+});
+
 app.use(bodyParser.urlencoded({
 	extended: false
 }));
@@ -85,10 +92,22 @@ function renderHome(response, data) {
 }
 
 function render500(response, errorSummary, errorDetails) {
+	response.locals.css = ["500"];
+	
 	response.status(500).render("500", {
 		summary: errorSummary,
 		details: errorDetails
 	});
+}
+
+function login(request, response, username) {
+	request.session.loggedIn = true;
+	request.session.username = username;
+	
+	response.locals.user = {
+		loggedIn: true,
+		username: username
+	};
 }
 
 app.get("/hit/:projectId", function(request, response) {
@@ -143,8 +162,10 @@ app.post("/start", function(request, response) {
 	
 	if(errors) {
 		renderIndex(response, {
-			formSubmitted: "start",
-			errors: errors
+			start: {
+				errors: errors,
+				values: request.body
+			}
 		});
 	}
 	
@@ -176,13 +197,14 @@ app.post("/start", function(request, response) {
 			if(error) {
 				if(error === "user exists") {
 					renderIndex(response, {
-						formSubmitted: "start",
-						start: request.body,
-						errors: [{
-							param: "username",
-							msg: "The username " + username + " is already registered",
-							value: username
-						}]
+						start: {
+							errors: [{
+								param: "username",
+								msg: "The username " + username + " is already registered",
+								value: username
+							}],
+							values: request.body,
+						}
 					});
 				}
 				
@@ -210,6 +232,66 @@ app.post("/start", function(request, response) {
 			}
 		});
 	}
+});
+
+app.post("/home", function(request, response) {
+	var username = request.body.username;
+	var password = request.body.password;
+	
+	async.waterfall([
+		function(callback) {
+			redisClient.hgetall("users:" + username, function(error, userDetails) {
+				if(error) {
+					callback(error);
+				}
+				
+				else {
+					if(userDetails) {
+						callback(null, userDetails);
+					}
+					
+					else {
+						callback("user not found");
+					}
+				}
+			});
+		},
+		
+		function(userDetails, callback) {
+			bcrypt.compare(password, userDetails.password, function(error, result) {
+				callback(error, result);
+			});
+		}
+	], function(error, isValidCombination) {
+		if(error && error !== "user not found") {
+			render500(response, "Error checking details on server", error);
+		}
+		
+		else {
+			if(error || !isValidCombination) {
+				renderIndex(response, {
+					login: {
+						errors: [{
+							param: "username",
+							msg: "Username/password combination incorrect",
+							value: username
+						}],
+						values: request.body,
+					}
+				});
+			}
+			
+			else {
+				login(request, response, username);
+				renderHome(response);
+			}
+		}
+	});
+	
+});
+
+app.use(function(request, response) {
+	renderIndex(response);
 });
 
 app.listen(3000);
