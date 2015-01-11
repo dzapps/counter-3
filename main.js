@@ -90,6 +90,7 @@ function renderIndex(response, data) {
 }
 
 function renderHome(response, data) {
+	response.locals.css = ["home"];
 	response.render("home", data || {});
 }
 
