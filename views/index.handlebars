@@ -1,0 +1,24 @@
+<div id="container">
+	<div id="landing-page">
+		<div id="title">
+			<h1>Hit counter</h1>
+			<h2>Log &amp; view your website hits</h2>
+		</div>
+		<div id="start">
+			<div id="create-project">
+				{{#errors}}
+					{{param}} {{msg}} {{value}}
+				{{/errors}}
+				<form action="/start" method="post">
+					<input class="form-control" name="project" placeholder="Project name">
+					<input class="form-control" name="username" placeholder="Username">
+					<input class="form-control" name="password" type="password" placeholder="Password">
+					<input class="btn btn-success" type="submit" value="Create project">
+				</form>
+			</div>
+			<div id="login">
+				
+			</div>
+		</div>
+	</div>
+</div>

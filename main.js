@@ -3,16 +3,28 @@ var express = require("express");
 var handlebars = require("express-handlebars");
 var session = require("express-session");
 var cookieParser = require("cookie-parser");
+var bodyParser = require("body-parser");
+var expressValidator = require("express-validator");
+var bcrypt = require("bcrypt");
 var redis = require("redis");
 var request = require("request");
 var _ = require("underscore");
+var async = require("async");
 require("amdefine/intercept");
 var id = require("js/id");
 
 var app = express();
 var redisClient = redis.createClient();
 
-app.engine("handlebars", handlebars());
+app.engine("handlebars", handlebars({
+	defaultLayout: "main"
+}));
+
+app.use(function(request, response, next) {
+	response.locals.css = [];
+	next();
+});
+
 app.set("view engine", "handlebars");
 app.use(cookieParser());
 app.use(express.static("./"));
@@ -23,6 +35,12 @@ app.use(session({
 	saveUninitialized: false,
 	secret: "ad6d3aa4ad0f"
 }));
+
+app.use(bodyParser.urlencoded({
+	extended: false
+}));
+
+app.use(expressValidator({}));
 
 function recordInitialHit(id, details) {
 	redisClient.hmset("hits:" + id, details);
@@ -55,6 +73,22 @@ function recordIpInfo(id) {
 
 function recordUserAgent(id, details) {
 	redisClient.hmset("hits:" + id, details);
+}
+
+function renderIndex(response, data) {
+	response.locals.css = ["index"];
+	response.render("index", data || {});
+}
+
+function renderHome(response, data) {
+	response.render("home", data || {});
+}
+
+function render500(response, errorSummary, errorDetails) {
+	response.status(500).render("500", {
+		summary: errorSummary,
+		details: errorDetails
+	});
 }
 
 app.get("/hit/:projectId", function(request, response) {
@@ -97,7 +131,84 @@ app.get("/hit-callback/:id", function(request, response) {
 });
 
 app.get("/", function(request, response) {
-	response.render("home");
+	renderIndex(response);
+});
+
+app.post("/start", function(request, response) {
+	request.checkBody("project", "Project name must be between 1 and 50 characters").len(1, 50);
+	request.checkBody("username", "Username must be between 1 and 50 characters").len(1, 50);
+	request.checkBody("password", "Password must be between 1 and 256 characters").len(1, 256);
+	
+	var errors = request.validationErrors();
+	
+	if(errors) {
+		renderIndex(response, {
+			formSubmitted: "start",
+			errors: errors
+		});
+	}
+	
+	else {
+		var projectName = request.body.project;
+		var username = request.body.username;
+		var password = request.body.password;
+		var userKey = "users:" + username;
+		
+		async.series({
+			checkUsernameAvailable: function(callback) {
+				redisClient.exists(userKey, function(error, keyExists) {
+					if(keyExists) {
+						callback("user exists");
+					}
+					
+					else {
+						callback();
+					}
+				});
+			},
+			
+			getPasswordHash: function(callback) {
+				bcrypt.hash(password, 8, function(error, hash) {
+					callback(error, hash);
+				});
+			}
+		}, function(error, results) {
+			if(error) {
+				if(error === "user exists") {
+					renderIndex(response, {
+						formSubmitted: "start",
+						errors: [{
+							param: "username",
+							msg: "The username " + username + " is already registered",
+							value: username
+						}]
+					});
+				}
+				
+				else {
+					render500("Internal server error", error);
+				}
+			}
+			
+			else {
+				redisClient.hmset(userKey, {
+					username: username,
+					password: results.getPasswordHash
+				});
+				
+				redisClient.hmset("projects:" + projectName, {
+					name: projectName,
+					user: username
+				});
+		
+				renderHome(response, {
+					justRegistered: true,
+					loggedIn: true,
+					username: username,
+				});
+			}
+		});
+	}
 });
 
 app.listen(3000);
