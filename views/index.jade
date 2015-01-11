@@ -1,0 +1,31 @@
+extends ./layouts/main.jade
+
+block content
+	#container
+		#landing-page
+			#title
+				h1 Hit counter
+				h2 Log &amp; view your website hits
+			#start
+				#create-project
+					if start && start.errors
+						| Error:
+						ul
+							each error in start.errors
+								li= error.msg
+					form(action="/start", method="post", autocomplete="off")
+						input.form-control(name="project", placeholder="Project name", value=start ? start.values.project : "")
+						input.form-control(name="username", placeholder="Username", value=start ? start.values.username : "")
+						input.form-control(name="password", type="password", placeholder="Password", value=start ? start.values.password : "")
+						input.btn.btn-success(type="submit", value="Create project")
+				#login
+					h1 Already have an account?
+					if login && login.errors
+						| Error:
+						ul
+							each error in login.errors
+								li= error.msg
+					form(action="/home", method="post")
+						input.form-control(name="username", placeholder="Username", value=login ? login.values.username : "")
+						input.form-control(name="password", type="password", placeholder="Password", value=login ? login.values.password : "")
+						input.btn.btn-primary(type="submit", value="Log in")

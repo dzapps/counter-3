@@ -5,7 +5,7 @@
 	"author": "Gus Hogg-Blake <gus@hogg-blake.co.uk>",
 	"dependencies": {
 		"express": "4.x",
-		"express-handlebars": "*",
+		"jade": "~1.7.0",
 		"express-session": "*",
 		"cookie-parser": "*",
 		"body-parser": "*",

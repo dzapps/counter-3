@@ -16,16 +16,12 @@ var id = require("js/id");
 var app = express();
 var redisClient = redis.createClient();
 
-app.engine("handlebars", handlebars({
-	defaultLayout: "main"
-}));
-
 app.use(function(request, response, next) {
 	response.locals.css = [];
 	next();
 });
 
-app.set("view engine", "handlebars");
+app.set("view engine", "jade");
 app.use(cookieParser());
 app.use(express.static("./"));
 

@@ -1,0 +1,14 @@
+| var path = "/hit-callback/!{hitId}";
+| 
+| var params = {
+| 	referrer: document.referrer,
+| 	resolution: screen.width + "x" + screen.height
+| };
+| 
+| var queryString = "";
+| 
+| for(var p in params) {
+| 	queryString += p + "=" + params[p];
+| }
+| 
+| new Image().src = path + "?" + queryString;
