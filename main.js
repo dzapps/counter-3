@@ -46,8 +46,9 @@ app.use(bodyParser.urlencoded({
 
 app.use(expressValidator({}));
 
-function recordInitialHit(id, details) {
-	redisClient.hmset("hits:" + id, details);
+function recordInitialHit(projectId, hitId, details) {
+	redisClient.hmset("hits:" + hitId, details);
+	redisClient.lpush("projectHits:" + projectId, hitId);
 }
 
 function recordIpInfo(id) {
@@ -89,20 +90,26 @@ function renderHome(request, response, data) {
 	response.locals.css = ["home"];
 	
 	redisClient.lrange("userProjects:" + request.session.username, 0, -1, function(error, ids) {
-		async.map(ids, function(id, callback) {
-			redisClient.hgetall("projects:" + id, function(error, project) {
-				callback(error, project);
+		if(error) {
+			render500(response, "Error retrieving projects from database", error);
+		}
+		
+		else {
+			async.map(ids, function(id, callback) {
+				redisClient.hgetall("projects:" + id, function(error, project) {
+					callback(error, project);
+				});
+			}, function(error, results) {
+				if(error) {
+					render500(response, "Error retrieving projects from database", error);
+				}
+				
+				else {
+					data.projects = results;
+					response.render("home", data);
+				}
 			});
-		}, function(error, results) {
-			if(error) {
-				render500(response, "Error retrieving projects from database", error);
-			}
-			
-			else {
-				data.projects = results;
-				response.render("home", data);
-			}
-		});
+		}
 	});
 }
 
@@ -148,7 +155,7 @@ app.get("/hit/:projectId", function(request, response) {
 			response.cookie("id", visitorId);
 		}
 		
-		recordInitialHit(hitId, {
+		recordInitialHit(projectId, hitId, {
 			project: projectId,
 			visitor: visitorId,
 			time: new Date().valueOf(),
@@ -172,10 +179,6 @@ app.get("/hit-callback/:id", function(request, response) {
 	});
 	
 	response.end("");
-});
-
-app.get("/", function(request, response) {
-	renderIndex(response);
 });
 
 app.post("/start", function(request, response) {
@@ -254,6 +257,34 @@ app.post("/start", function(request, response) {
 			}
 		});
 	}
+});
+
+app.get("/project/:id", function(request, response) {
+	var projectId = request.params.id;
+	
+	redisClient.lrange("projectHits:" + projectId, 0, -1, function(error, ids) {
+		if(error) {
+			render500(response, "Error retrieving hits from database", error);
+		}
+		
+		else {
+			async.map(ids, function(id, callback) {
+				redisClient.hgetall("hits:" + id, function(error, hit) {
+					callback(error, hit);
+				});
+			}, function(error, results) {
+				if(error) {
+					render500(response, "Error retrieving hits from database", error);
+				}
+				
+				else {
+					response.render("project", {
+						hits: results
+					});
+				}
+			});
+		}
+	});
 });
 
 app.post("/home", function(request, response) {

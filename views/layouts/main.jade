@@ -2,10 +2,11 @@ doctype html
 html
 	head
 		title Hitcounter
-		link(rel="stylesheet", type="text/css", href="/css/bootstrap.min.css")
-		link(rel="stylesheet", type="text/css", href="/css/bootstrap-theme.min.css")
-		link(rel="stylesheet", type="text/css", href="http://fonts.googleapis.com/css?family=Arvo:400,700")
-		each fn in css
-			link(rel="stylesheet", type="text/css", href="/css/" + fn + ".css")
+		block head
+			link(rel="stylesheet", type="text/css", href="/css/bootstrap.min.css")
+			link(rel="stylesheet", type="text/css", href="/css/bootstrap-theme.min.css")
+			link(rel="stylesheet", type="text/css", href="http://fonts.googleapis.com/css?family=Arvo:400,700")
+			each fn in css
+				link(rel="stylesheet", type="text/css", href="/css/" + fn + ".css")
 	body
 		block content

@@ -15,3 +15,15 @@ h1 {
 	padding: .8em;
 	background: white;
 }
+
+table.projects {
+	width: 100%;
+}
+
+form.create-project {
+	display: flex;
+}
+
+.create-project-submit {
+	margin-left: .3em;
+}

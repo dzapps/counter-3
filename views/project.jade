@@ -1,0 +1,17 @@
+extends ./layouts/home
+
+append head
+	link(rel="stylesheet", type="text/css", href="/css/home.css")
+
+block home-content
+	table.table.table-bordered
+		thead
+			tr
+				th Date
+				th ISP, IP &amp; location
+				th User agent &amp; device
+				th URL &amp; referrer
+		tbody
+			each hit in hits
+				tr
+					td= hit.date
