@@ -22,12 +22,15 @@ block home-content
 						<br>
 						#{hit.ip}
 						<br>
-						#{hit.city}, #{hit.region}, #{hit.country}
+						#{[hit.city, hit.region, hit.country].filter(function(s) { return s; }).join(", ") || "[no location data available]"}
 					td.
 						#{hit.userAgent}
 						<br>
 						#{hit.resolution}
-					td.
-						<a target="_blank" href="#{hit.url}">#{hit.url}</a>
-						<br>
-						<a target="_blank" href="#{hit.referrer}">#{hit.referrer}</a>
+					td
+						a(target="_blank", href=hit.url)= hit.url
+						br
+						if hit.referrer
+							a(target="_blank", href=hit.referrer)= hit.referrer
+						else
+							| [no referrer]
