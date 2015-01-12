@@ -122,6 +122,10 @@ function render500(response, errorSummary, errorDetails) {
 	});
 }
 
+function renderInstallProject(response, data) {
+	response.render("install-project", data);
+}
+
 function createProject(username, name, id) {
 	redisClient.hmset("projects:" + id, {
 		name: name,
@@ -301,7 +305,7 @@ app.get("/project/:id", function(request, response) {
 });
 
 app.get("/project/:id/install/:name", function(request, response) {
-	response.render("install-project", request.params);
+	renderInstallProject(response, request.params);
 });
 
 app.post("/home", function(request, response) {
@@ -357,6 +361,25 @@ app.post("/home", function(request, response) {
 			}
 		}
 	});
+});
+
+app.post("/create-project", function(request, response) {
+	if(request.session.loggedIn) {
+		var name = request.body.name;
+		var projectId = id();
+		
+		createProject(request.session.username, name, projectId);
+		
+		renderInstallProject(response, {
+			name: name,
+			id: projectId,
+			justCreated: true
+		});
+	}
+	
+	else {
+		renderIndex(response);
+	}
 });
 
 app.get("/home", function(request, response) {

@@ -1,6 +1,8 @@
 extends ./layouts/home
 
 block home-content
+	h2 Projects
+	p Click a project name below to view the statistics:
 	table.table.table-bordered
 		thead
 			tr
@@ -12,6 +14,7 @@ block home-content
 						a(href="/project/" + project.id)= project.name
 					td
 						a(href="/project/" + project.id + "/install/" + project.name) Install
+	h3 New project
 	form.create-project(action="/create-project" method="post")
 		div
 			input.form-control(name="name", placeholder="Project name")

@@ -7,9 +7,9 @@ block home-content
 	p
 		| &larr; 
 		a(href="/home") Back to projects
-	h2 #{name} installation
+	h2 #{justCreated ? "Project created!" : name + " installation"}
 	p.
-		To install the hit counter, simply copy the following HTML snippet to each
+		To install #{justCreated ? "your new" : "the"} hit counter, simply copy the following HTML snippet to each
 		page for which you want to record hits:
 	pre
 		code.
