@@ -4,33 +4,40 @@ append head
 	link(rel="stylesheet", type="text/css", href="/css/home.css")
 
 block home-content
-	table.table.table-bordered
-		thead
-			tr
-				th Date
-				th ISP, IP &amp; location
-				th User agent &amp; device
-				th URL &amp; referrer
-		tbody
-			each hit in hits
+	p
+		| &larr; 
+		a(href="/home") Back to projects
+	h2= projectName
+	if hits.length > 0
+		table.table.table-bordered
+			thead
 				tr
-					td= new Date(parseInt(hit.time)).toLocaleString().replace(/ [A-Z]{2,3}[-+]\d{4} \([A-Z]{2,3}\)$/, "")
-					td.
-						<img src="/img/flags/#{hit.country.toLowerCase()}.png">
-						<br>
-						#{hit.isp}
-						<br>
-						#{hit.ip}
-						<br>
-						#{[hit.city, hit.region, hit.country].filter(function(s) { return s; }).join(", ") || "[no location data available]"}
-					td.
-						#{hit.userAgent}
-						<br>
-						#{hit.resolution}
-					td
-						a(target="_blank", href=hit.url)= hit.url
-						br
-						if hit.referrer
-							a(target="_blank", href=hit.referrer)= hit.referrer
-						else
-							| [no referrer]
+					th Date
+					th ISP, IP &amp; location
+					th User agent &amp; device
+					th URL &amp; referrer
+			tbody
+				each hit in hits
+					tr
+						td= new Date(parseInt(hit.time)).toLocaleString().replace(/ [A-Z]{2,3}[-+]\d{4} \([A-Z]{2,3}\)$/, "")
+						td.
+							<img src="/img/flags/#{hit.country.toLowerCase()}.png">
+							<br>
+							#{hit.isp}
+							<br>
+							#{hit.ip}
+							<br>
+							#{[hit.city, hit.region, hit.country].filter(function(s) { return s; }).join(", ") || "[no location data available]"}
+						td.
+							#{hit.userAgent}
+							<br>
+							#{hit.resolution}
+						td
+							a(target="_blank", href=hit.url)= hit.url
+							br
+							if hit.referrer
+								a(target="_blank", href=hit.referrer)= hit.referrer
+							else
+								| [no referrer]
+	else
+		p Your project hasn't had any hits yet.

@@ -262,27 +262,40 @@ app.post("/start", function(request, response) {
 app.get("/project/:id", function(request, response) {
 	var projectId = request.params.id;
 	
-	redisClient.lrange("projectHits:" + projectId, 0, -1, function(error, ids) {
+	async.waterfall([
+		function(callback) {
+			redisClient.hget("projects:" + projectId, "name", function(error, projectName) {
+				callback(error, projectName);
+			});
+		},
+		
+		function(projectName, callback) {
+			redisClient.lrange("projectHits:" + projectId, 0, -1, function(error, ids) {
+				if(error) {
+					callback(error);
+				}
+				
+				else {
+					async.map(ids, function(id, callback) {
+						redisClient.hgetall("hits:" + id, function(error, hit) {
+							callback(error, hit);
+						});
+					}, function(error, results) {
+						callback(error, {
+							projectName: projectName,
+							hits: results
+						});
+					});
+				}
+			});
+		}
+	], function(error, data) {
 		if(error) {
 			render500(response, "Error retrieving hits from database", error);
 		}
 		
 		else {
-			async.map(ids, function(id, callback) {
-				redisClient.hgetall("hits:" + id, function(error, hit) {
-					callback(error, hit);
-				});
-			}, function(error, results) {
-				if(error) {
-					render500(response, "Error retrieving hits from database", error);
-				}
-				
-				else {
-					response.render("project", {
-						hits: results
-					});
-				}
-			});
+			response.render("project", data);
 		}
 	});
 });
@@ -340,7 +353,16 @@ app.post("/home", function(request, response) {
 			}
 		}
 	});
+});
+
+app.get("/home", function(request, response) {
+	if(request.session.loggedIn) {
+		renderHome(request, response);
+	}
 	
+	else {
+		renderIndex(response);
+	}
 });
 
 app.use(function(request, response) {
