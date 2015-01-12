@@ -300,6 +300,10 @@ app.get("/project/:id", function(request, response) {
 	});
 });
 
+app.get("/project/:id/install/:name", function(request, response) {
+	response.render("install-project", request.params);
+});
+
 app.post("/home", function(request, response) {
 	var username = request.body.username;
 	var password = request.body.password;

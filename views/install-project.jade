@@ -1,0 +1,16 @@
+extends ./layouts/home
+
+append head
+	link(rel="stylesheet", type="text/css", href="/css/home.css")
+
+block home-content
+	p
+		| &larr; 
+		a(href="/home") Back to projects
+	h2 #{name} installation
+	p.
+		To install the hit counter, simply copy the following HTML snippet to each
+		page for which you want to record hits:
+	pre
+		code.
+			&lt;script src="//hogg-blake.co.uk:3000/hit/#{id}"&gt;&lt;/script&gt;

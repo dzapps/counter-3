@@ -11,7 +11,7 @@ block home-content
 					td
 						a(href="/project/" + project.id)= project.name
 					td
-						a(href="/project/install/" + project.id) Install
+						a(href="/project/" + project.id + "/install/" + project.name) Install
 	form.create-project(action="/create-project" method="post")
 		div
 			input.form-control(name="name", placeholder="Project name")
