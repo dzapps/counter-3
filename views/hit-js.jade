@@ -1,14 +1,14 @@
-| var path = "/hit-callback/!{hitId}";
+| var url = "!{callbackUrl}";
 | 
 | var params = {
 | 	referrer: document.referrer,
 | 	resolution: screen.width + "x" + screen.height
 | };
 | 
-| var queryString = "";
+| var query = [];
 | 
 | for(var p in params) {
-| 	queryString += p + "=" + params[p];
+| 	query.push(p + "=" + params[p]);
 | }
 | 
-| new Image().src = path + "?" + queryString;
+| new Image().src = url + "?" + query.join("&");

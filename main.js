@@ -167,7 +167,7 @@ app.get("/hit/:projectId", function(request, response) {
 		recordIpInfo(hitId);
 		
 		response.render("hit-js", {
-			id: hitId
+			callbackUrl: request.protocol + "://" + request.headers.host + "/hit-callback/" + hitId
 		});
 	}
 });
