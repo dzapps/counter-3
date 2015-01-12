@@ -54,7 +54,7 @@ input {
 	font-size: 1.5em;
 }
 
-#login {
+#login, #quick-links {
 	color: white;
 	margin-top: .7em;
 	border-radius: .6em;
@@ -62,9 +62,17 @@ input {
 	background: rgba(171, 171, 171, 0.44);
 }
 
-#login h1 {
+#login h1, #quick-links h1 {
 	font-size: .9em;
 	font-weight: bold;
 	color: white;
 	margin-top: 0;
+}
+
+#quick-links {
+	margin-top: 3em;
+}
+
+a.logout {
+	color: white;
 }

@@ -80,9 +80,15 @@ function recordUserAgent(id, details) {
 	redisClient.hmset("hits:" + id, details);
 }
 
-function renderIndex(response, data) {
+function renderIndex(request, response, data) {
+	data = data || {};
+	
+	data.loggedIn = request.session.loggedIn;
+	data.username = request.session.username;
+	
 	response.locals.css = ["index"];
-	response.render("index", data || {});
+	
+	response.render("index", data);
 }
 
 function renderHome(request, response, data) {
@@ -193,7 +199,7 @@ app.post("/start", function(request, response) {
 	var errors = request.validationErrors();
 	
 	if(errors) {
-		renderIndex(response, {
+		renderIndex(request, response, {
 			start: {
 				errors: errors,
 				values: request.body
@@ -229,7 +235,7 @@ app.post("/start", function(request, response) {
 		}, function(error, results) {
 			if(error) {
 				if(error === "user exists") {
-					renderIndex(response, {
+					renderIndex(request, response, {
 						start: {
 							errors: [{
 								param: "username",
@@ -346,7 +352,7 @@ app.post("/home", function(request, response) {
 		
 		else {
 			if(error || !isValidCombination) {
-				renderIndex(response, {
+				renderIndex(request, response, {
 					login: {
 						errors: [{
 							param: "username",
@@ -381,7 +387,7 @@ app.post("/create-project", function(request, response) {
 	}
 	
 	else {
-		renderIndex(response);
+		renderIndex(request, response);
 	}
 });
 
@@ -391,12 +397,19 @@ app.get("/home", function(request, response) {
 	}
 	
 	else {
-		renderIndex(response);
+		renderIndex(request, response);
 	}
 });
 
+app.get("/logout", function(request, response) {
+	request.session.loggedIn = false;
+	request.session.username = null;
+	
+	renderIndex(request, response);
+});
+
 app.use(function(request, response) {
-	renderIndex(response);
+	renderIndex(request, response);
 });
 
 app.listen(3000);
