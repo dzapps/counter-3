@@ -27,3 +27,7 @@ form.create-project {
 .create-project-submit {
 	margin-left: .3em;
 }
+
+a.referrer {
+	color: #D25151;
+}
