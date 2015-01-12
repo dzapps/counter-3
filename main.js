@@ -255,7 +255,10 @@ app.post("/start", function(request, response) {
 				createProject(username, projectName, projectId);
 				login(request, response, username);
 		
-				renderHome(request, response, {
+				renderInstallProject(response, {
+					name: projectName,
+					id: projectId,
+					justCreated: true,
 					justRegistered: true
 				});
 			}

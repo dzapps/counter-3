@@ -5,8 +5,9 @@ append head
 
 block home-content
 	p
-		| &larr; 
-		a(href="/home") Back to projects
+		if !justRegistered
+			| &larr; 
+		a(href="/home") Projects
 	h2 #{justCreated ? "Project created!" : name + " installation"}
 	p.
 		To install #{justCreated ? "your new" : "the"} hit counter, simply copy the following HTML snippet to each
@@ -14,3 +15,5 @@ block home-content
 	pre
 		code.
 			&lt;script src="//hogg-blake.co.uk:3000/hit/#{id}"&gt;&lt;/script&gt;
+	p
+		a(class="btn btn-primary" href="/project/" + id) View project
