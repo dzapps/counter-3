@@ -1,6 +1,6 @@
 {
 	"name": "counter",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"description": "Hit counter",
 	"author": "Gus Hogg-Blake <gus@hogg-blake.co.uk>",
 	"dependencies": {
