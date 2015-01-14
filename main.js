@@ -176,6 +176,8 @@ app.get("/hit/:projectId", function(request, response) {
 		
 		recordIpInfo(hitId);
 		
+		response.setHeader("Content-Type", "text/javascript");
+		
 		response.render("hit-js", {
 			callbackUrl: request.protocol + "://" + request.headers.host + "/hit-callback/" + hitId
 		});
@@ -188,6 +190,7 @@ app.get("/hit-callback/:id", function(request, response) {
 		resolution: request.query.resolution
 	});
 	
+	response.setHeader("Content-Type", "image/png");
 	response.end("");
 });
 
