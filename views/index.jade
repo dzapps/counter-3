@@ -6,6 +6,12 @@ block content
 			#title
 				h1 Hit counter
 				h2 Log &amp; view your website hits
+				if !loggedIn
+					#beta.bg-warning
+						| This is an early version meant mostly for testing purposes, although
+						| the core functionality is stable.  
+						a(href="http://github.com/gushogg-blake/counter") View the code on GitHub
+						| .
 			#start
 				if loggedIn
 					#quick-links
